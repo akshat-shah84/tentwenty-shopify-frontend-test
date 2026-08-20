@@ -2,6 +2,7 @@
 
 {% liquid
   assign order = 'logo,menu,localization,search,drawer_search,actions'
+  assign tentwenty_header = section.settings.tentwenty_header
 
   if shop.customer_accounts_enabled
     assign order = 'drawer_search,logo,menu,localization,search,actions'
@@ -80,9 +81,11 @@
     endif
   endif
 
-  capture logo
-    content_for 'block', type: '_header-logo', id: 'header-logo'
-  endcapture
+  unless tentwenty_header
+    capture logo
+      content_for 'block', type: '_header-logo', id: 'header-logo'
+    endcapture
+  endunless
 
   capture menu
     content_for 'block', type: '_header-menu', id: 'header-menu'
@@ -96,9 +99,20 @@
     content_for 'block', type: '_header-menu', id: 'header-menu', variant: 'navigation_bar', transparent: transparent
   endcapture
 
-  capture actions
-    render 'header-actions', customer_account_menu: section.settings.customer_account_menu, display_style: section.settings.actions_display_style, section: section
-  endcapture
+  unless tentwenty_header
+    capture actions
+      render 'header-actions', customer_account_menu: section.settings.customer_account_menu, display_style: section.settings.actions_display_style, section: section
+    endcapture
+  endunless
+
+  if tentwenty_header and section.settings.tentwenty_contact_label != blank
+    capture contact
+      <a class="header-contact" href="{{ section.settings.tentwenty_contact_url | default: routes.root_url }}">
+        <span>{{ section.settings.tentwenty_contact_label | escape }}</span>
+        <span class="svg-wrapper" aria-hidden="true">{{ 'icon-arrow.svg' | inline_asset_content }}</span>
+      </a>
+    endcapture
+  endif
 
   if shop.customer_accounts_enabled
     assign search_class = 'search-action--hidden-on-drawer'
@@ -127,6 +141,10 @@
         assign order = 'logo,search,menu,localization,drawer_search,actions'
       endif
     endif
+  endif
+
+  if tentwenty_header
+    assign order = 'menu,contact'
   endif
   capture search
     render 'search', style: search_style, class: search_class, display_style: section.settings.actions_display_style
@@ -326,6 +344,9 @@
 <header-component
   id="header-component"
   class="{{ class }}"
+  {% if tentwenty_header %}
+    data-tentwenty-header
+  {% endif %}
   data-theme-color="rgb({{ section.settings.background_color_top.rgb | default: settings.page_background_color.rgb }})"
   data-bubble-style="{{ section.settings.bubble_style }}"
   {% if transparent %}
@@ -437,7 +458,8 @@
         actions: actions,
         localization: localization_markup,
         search: search,
-        drawer_search: drawer_search
+        drawer_search: drawer_search,
+        contact: contact
       %}
     {% endcapture %}
 
@@ -914,6 +936,53 @@
 
     header-actions {
       grid-area: rightB;
+    }
+  }
+
+  .header[data-tentwenty-header] {
+    --header-padding: var(--padding-xs);
+
+    .header-contact {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--gap-xs);
+      min-height: var(--minimum-touch-target);
+      padding: var(--padding-2xs) var(--padding-sm);
+      border: 1px solid currentColor;
+      border-radius: 0;
+      color: inherit;
+      font-family: var(--font-body--family);
+      font-size: 0.75rem;
+      font-weight: var(--font-body--weight);
+      line-height: 1;
+      text-decoration: none;
+    }
+
+    .header-contact:hover {
+      text-decoration: none;
+    }
+
+    .header-contact .svg-wrapper,
+    .header-contact svg {
+      width: 0.875rem;
+      height: 0.875rem;
+    }
+
+    @media screen and (max-width: 749px) {
+      .header__drawer {
+        grid-area: rightB;
+        justify-self: end;
+      }
+
+      .header-contact {
+        grid-column: 1 / span 2;
+        justify-self: start;
+        margin-inline-start: var(--page-margin);
+      }
+
+      .menu-drawer-container .header__icon--summary {
+        padding-inline: var(--page-margin);
+      }
     }
   }
 
@@ -1437,6 +1506,29 @@
     {
       "type": "header",
       "content": "t:content.appearance"
+    },
+    {
+      "type": "header",
+      "content": "TenTwenty layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "tentwenty_header",
+      "label": "Enable TenTwenty header layout",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "tentwenty_contact_label",
+      "label": "Contact button label",
+      "default": "Contact us",
+      "visible_if": "{{ section.settings.tentwenty_header }}"
+    },
+    {
+      "type": "url",
+      "id": "tentwenty_contact_url",
+      "label": "Contact button link",
+      "visible_if": "{{ section.settings.tentwenty_header }}"
     },
     {
       "type": "select",
