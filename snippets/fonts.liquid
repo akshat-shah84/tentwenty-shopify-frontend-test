@@ -1,12 +1,19 @@
 {%- unless settings.type_body_font.system? -%}
   {{ settings.type_body_font | font_url | preload_tag: as: 'font', type: 'font/woff2', fetchpriority: 'low' }}
 {%- endunless -%}
-{%- unless settings.type_subheading_font.system? -%}
+{%- unless settings.type_subheading_font.system? or settings.type_subheading_font == settings.type_body_font -%}
   {{ settings.type_subheading_font | font_url | preload_tag: as: 'font', type: 'font/woff2', fetchpriority: 'low' }}
 {%- endunless -%}
-{%- unless settings.type_heading_font.system? -%}
+{%- unless settings.type_heading_font.system?
+  or settings.type_heading_font == settings.type_body_font
+  or settings.type_heading_font == settings.type_subheading_font
+-%}
   {{ settings.type_heading_font | font_url | preload_tag: as: 'font', type: 'font/woff2', fetchpriority: 'low' }}
 {%- endunless -%}
-{%- unless settings.type_accent_font.system? -%}
+{%- unless settings.type_accent_font.system?
+  or settings.type_accent_font == settings.type_body_font
+  or settings.type_accent_font == settings.type_subheading_font
+  or settings.type_accent_font == settings.type_heading_font
+-%}
   {{ settings.type_accent_font | font_url | preload_tag: as: 'font', type: 'font/woff2', fetchpriority: 'low' }}
 {%- endunless -%}
