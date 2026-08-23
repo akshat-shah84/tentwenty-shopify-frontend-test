@@ -10,6 +10,10 @@ class TentwentyHero extends HTMLElement {
   #current = null;
   #duration = 5000;
   #reduceMotion = null;
+  #cycle = 0;
+  #thumbnailTrack = null;
+  #transitionTimer = null;
+  #targetIndex = 0;
 
   connectedCallback() {
     this.#slides = [...this.querySelectorAll('[data-hero-slide]')];
@@ -17,7 +21,9 @@ class TentwentyHero extends HTMLElement {
     this.#previous = this.querySelector('[data-hero-previous]');
     this.#next = this.querySelector('[data-hero-next]');
     this.#current = this.querySelector('[data-hero-current]');
+    this.#thumbnailTrack = this.querySelector('.tentwenty-hero__thumbnails');
     this.#duration = Number(this.dataset.duration) || 5000;
+    this.#targetIndex = this.#index;
     this.#reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     this.dataset.enhanced = '';
@@ -32,6 +38,7 @@ class TentwentyHero extends HTMLElement {
 
   disconnectedCallback() {
     this.#cancelCycle();
+    if (this.#transitionTimer !== null) window.clearTimeout(this.#transitionTimer);
     this.#previous?.removeEventListener('click', this.#showPrevious);
     this.#next?.removeEventListener('click', this.#showNext);
     this.#thumbnails?.forEach((thumbnail) => thumbnail.removeEventListener('click', this.#selectThumbnail));
@@ -40,8 +47,8 @@ class TentwentyHero extends HTMLElement {
     this.#reduceMotion?.removeEventListener('change', this.#handleMotionPreference);
   }
 
-  #showPrevious = () => this.#goTo((this.#index - 1 + this.#slides.length) % this.#slides.length);
-  #showNext = () => this.#goTo((this.#index + 1) % this.#slides.length);
+  #showPrevious = () => this.#goTo((this.#targetIndex - 1 + this.#slides.length) % this.#slides.length);
+  #showNext = () => this.#goTo((this.#targetIndex + 1) % this.#slides.length);
 
   #selectThumbnail = (event) => {
     const index = Number(event.currentTarget.dataset.index);
@@ -68,20 +75,38 @@ class TentwentyHero extends HTMLElement {
   #handleMotionPreference = () => {
     this.#cancelCycle();
     this.#setProgress(0);
+    if (this.#transitionTimer !== null) {
+      window.clearTimeout(this.#transitionTimer);
+      this.#completeTransition();
+      return;
+    }
     this.#beginCycle();
   };
 
   #goTo(index) {
-    if (index === this.#index || !this.#slides[index]) {
-      this.#beginCycle();
+    if (index === this.#targetIndex || !this.#slides[index]) {
+      if (this.#transitionTimer === null) this.#beginCycle();
       return;
     }
 
     this.#cancelCycle();
-    this.#slides[this.#index].classList.remove('is-active');
-    this.#slides[this.#index].setAttribute('aria-hidden', 'true');
-    this.#slides[this.#index].setAttribute('inert', '');
-    this.#index = index;
+    this.#targetIndex = index;
+    if (this.#reduceMotion.matches) {
+      this.#completeTransition();
+      return;
+    }
+    const outgoingSlide = this.#slides[this.#index];
+    outgoingSlide.classList.add('is-exiting');
+    outgoingSlide.setAttribute('aria-hidden', 'true');
+    outgoingSlide.setAttribute('inert', '');
+    if (this.#transitionTimer !== null) window.clearTimeout(this.#transitionTimer);
+    this.#transitionTimer = window.setTimeout(this.#completeTransition, 420);
+  }
+
+  #completeTransition = () => {
+    const outgoingSlide = this.#slides[this.#index];
+    outgoingSlide.classList.remove('is-active', 'is-exiting');
+    this.#index = this.#targetIndex;
     const slide = this.#slides[this.#index];
     slide.removeAttribute('inert');
     slide.setAttribute('aria-hidden', 'false');
@@ -90,9 +115,12 @@ class TentwentyHero extends HTMLElement {
       const selected = thumbnailIndex === this.#index;
       thumbnail.classList.toggle('is-selected', selected);
       thumbnail.setAttribute('aria-selected', String(selected));
+      thumbnail.tabIndex = selected ? 0 : -1;
     });
+    this.#thumbnailTrack?.style.setProperty('transform', `translateX(${-this.#index * 100}%)`);
     if (this.#current) this.#current.textContent = String(this.#index + 1).padStart(2, '0');
     this.#setProgress(0);
+    this.#transitionTimer = null;
     this.#beginCycle();
   }
 
@@ -100,22 +128,25 @@ class TentwentyHero extends HTMLElement {
     this.#cancelCycle();
     if (!this.hasAttribute('data-autoplay') || this.#slides.length < 2 || this.#reduceMotion.matches || this.#paused) return;
     this.#cycleStart = performance.now();
-    this.#frame = requestAnimationFrame(this.#tick);
+    const cycle = this.#cycle;
+    this.#frame = requestAnimationFrame((now) => this.#tick(now, cycle));
   }
 
   #cancelCycle() {
+    this.#cycle += 1;
     if (this.#frame !== null) cancelAnimationFrame(this.#frame);
     this.#frame = null;
   }
 
-  #tick = (now) => {
+  #tick = (now, cycle) => {
+    if (cycle !== this.#cycle) return;
     const progress = Math.min((now - this.#cycleStart) / this.#duration, 1);
     this.#setProgress(progress * 100);
     if (progress >= 1) {
       this.#goTo((this.#index + 1) % this.#slides.length);
       return;
     }
-    this.#frame = requestAnimationFrame(this.#tick);
+    this.#frame = requestAnimationFrame((timestamp) => this.#tick(timestamp, cycle));
   };
 
   #setProgress(progress) {

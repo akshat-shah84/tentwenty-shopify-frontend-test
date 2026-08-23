@@ -93,27 +93,30 @@
         <button class="tentwenty-hero__control" type="button" data-hero-previous aria-label="Previous slide">
           <span class="svg-wrapper tentwenty-hero__previous-icon" aria-hidden="true">{{ 'icon-arrow.svg' | inline_asset_content }}</span>
         </button>
-        <div class="tentwenty-hero__thumbnails" role="tablist" aria-label="Select slide">
-          {% for block in section.blocks %}
-            {% assign thumbnail_image = block.settings.thumbnail_image | default: block.settings.desktop_image %}
-            <button
-              class="tentwenty-hero__thumbnail{% if forloop.first %} is-selected{% endif %}"
-              type="button"
-              role="tab"
-              data-hero-thumbnail
-              data-index="{{ forloop.index0 }}"
-              aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
-              aria-controls="tentwenty-hero-slide-{{ section.id }}-{{ forloop.index0 }}"
-              aria-label="Slide {{ forloop.index }} of {{ slide_count }}"
-            >
-              {% if thumbnail_image != blank %}
-                {{ thumbnail_image | image_url: width: 160 | image_tag: loading: 'lazy', widths: '80, 160', sizes: '44px', alt: thumbnail_image.alt }}
-              {% else %}
-                {{ 'lifestyle-1' | placeholder_svg_tag: 'tentwenty-hero__thumbnail-image' }}
-              {% endif %}
-              <span class="tentwenty-hero__thumbnail-progress" aria-hidden="true"></span>
-            </button>
-          {% endfor %}
+        <div class="tentwenty-hero__thumbnail-viewport">
+          <div class="tentwenty-hero__thumbnails" role="tablist" aria-label="Select slide">
+            {% for block in section.blocks %}
+              {% assign thumbnail_image = block.settings.thumbnail_image | default: block.settings.desktop_image %}
+              <button
+                class="tentwenty-hero__thumbnail{% if forloop.first %} is-selected{% endif %}"
+                type="button"
+                role="tab"
+                data-hero-thumbnail
+                data-index="{{ forloop.index0 }}"
+                aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                tabindex="{% if forloop.first %}0{% else %}-1{% endif %}"
+                aria-controls="tentwenty-hero-slide-{{ section.id }}-{{ forloop.index0 }}"
+                aria-label="Slide {{ forloop.index }} of {{ slide_count }}"
+              >
+                {% if thumbnail_image != blank %}
+                  {{ thumbnail_image | image_url: width: 160 | image_tag: loading: 'lazy', widths: '80, 160', sizes: '44px', alt: thumbnail_image.alt }}
+                {% else %}
+                  {{ 'lifestyle-1' | placeholder_svg_tag: 'tentwenty-hero__thumbnail-image' }}
+                {% endif %}
+                <span class="tentwenty-hero__thumbnail-progress" aria-hidden="true"></span>
+              </button>
+            {% endfor %}
+          </div>
         </div>
         <button class="tentwenty-hero__control" type="button" data-hero-next aria-label="Next slide">
           <span class="svg-wrapper" aria-hidden="true">{{ 'icon-arrow.svg' | inline_asset_content }}</span>
@@ -275,13 +278,21 @@
     transform: rotate(180deg);
   }
 
+  .tentwenty-hero__thumbnail-viewport {
+    width: 2.75rem;
+    height: 2.75rem;
+    overflow: hidden;
+  }
+
   .tentwenty-hero__thumbnails {
     display: flex;
-    gap: 0.5rem;
+    height: 100%;
+    transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .tentwenty-hero__thumbnail {
     position: relative;
+    flex: 0 0 2.75rem;
     width: 2.75rem;
     height: 2.75rem;
     padding: 0.1875rem;
@@ -349,10 +360,33 @@
     animation-delay: 240ms;
   }
 
+  .tentwenty-hero[data-enhanced] .tentwenty-hero__slide.is-exiting [data-hero-animate] {
+    animation: tentwenty-hero-content-out 300ms cubic-bezier(0.55, 0, 1, 0.45) both;
+  }
+
+  .tentwenty-hero[data-enhanced] .tentwenty-hero__slide.is-exiting [data-hero-animate]:nth-child(1) {
+    animation-delay: 90ms;
+  }
+
+  .tentwenty-hero[data-enhanced] .tentwenty-hero__slide.is-exiting [data-hero-animate]:nth-child(2) {
+    animation-delay: 60ms;
+  }
+
+  .tentwenty-hero[data-enhanced] .tentwenty-hero__slide.is-exiting [data-hero-animate]:nth-child(3) {
+    animation-delay: 30ms;
+  }
+
   @keyframes tentwenty-hero-content-in {
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+
+  @keyframes tentwenty-hero-content-out {
+    to {
+      opacity: 0;
+      transform: translateY(-0.75rem);
     }
   }
 
@@ -387,6 +421,12 @@
     }
 
     .tentwenty-hero__thumbnail {
+      flex-basis: 2.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+
+    .tentwenty-hero__thumbnail-viewport {
       width: 2.5rem;
       height: 2.5rem;
     }
@@ -403,7 +443,8 @@
     }
 
     .tentwenty-hero [data-hero-animate],
-    .tentwenty-hero[data-enhanced] .tentwenty-hero__slide.is-active [data-hero-animate] {
+    .tentwenty-hero[data-enhanced] .tentwenty-hero__slide.is-active [data-hero-animate],
+    .tentwenty-hero[data-enhanced] .tentwenty-hero__slide.is-exiting [data-hero-animate] {
       animation: none;
       opacity: 1;
       transform: none;

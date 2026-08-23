@@ -20,24 +20,15 @@
         },
         "grower_story": {
           "type": "slide",
-          "settings": {
-            "eyebrow": "Grown With Care",
-            "heading": "Closer To The\nLand"
-          }
+          "settings": {}
         },
         "harvest_story": {
           "type": "slide",
-          "settings": {
-            "eyebrow": "Seasonal Harvest",
-            "heading": "Fresh From\nOur Fields"
-          }
+          "settings": {}
         },
         "community_story": {
           "type": "slide",
-          "settings": {
-            "eyebrow": "Made For Sharing",
-            "heading": "From Our Farm\nTo Your Table"
-          }
+          "settings": {}
         }
       },
       "block_order": ["farm_story", "grower_story", "harvest_story", "community_story"],
