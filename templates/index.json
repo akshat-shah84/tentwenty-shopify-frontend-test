@@ -6,7 +6,8 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
     "tentwenty_hero": {
       "type": "tentwenty-hero",
@@ -14,28 +15,98 @@
         "farm_story": {
           "type": "slide",
           "settings": {
+            "desktop_image": "shopify://shop_images/pexels-tim-mossholder-974314_1.jpg",
             "eyebrow": "Welcome To TenTwenty Farms",
-            "heading": "From Our Farms\nTo Your Hands"
+            "heading": "From Our Farms\nTo Your Hands",
+            "description": "",
+            "cta_label": "",
+            "cta_url": ""
           }
         },
         "grower_story": {
           "type": "slide",
-          "settings": {}
+          "settings": {
+            "desktop_image": "shopify://shop_images/pexels-tim-mossholder-974314_1.jpg",
+            "eyebrow": "Welcome To TenTwenty Farms",
+            "heading": "From Our Farms\nTo Your Hands",
+            "description": "",
+            "cta_label": "",
+            "cta_url": ""
+          }
         },
         "harvest_story": {
           "type": "slide",
-          "settings": {}
+          "settings": {
+            "desktop_image": "shopify://shop_images/pexels-tim-mossholder-974314_1.jpg",
+            "eyebrow": "Welcome To TenTwenty Farms",
+            "heading": "From Our Farms\nTo Your Hands",
+            "description": "",
+            "cta_label": "",
+            "cta_url": ""
+          }
         },
         "community_story": {
           "type": "slide",
-          "settings": {}
+          "settings": {
+            "desktop_image": "shopify://shop_images/pexels-tim-mossholder-974314_1.jpg",
+            "eyebrow": "Welcome To TenTwenty Farms",
+            "heading": "From Our Farms\nTo Your Hands",
+            "description": "",
+            "cta_label": "",
+            "cta_url": ""
+          }
         }
       },
-      "block_order": ["farm_story", "grower_story", "harvest_story", "community_story"],
+      "block_order": [
+        "farm_story",
+        "grower_story",
+        "harvest_story",
+        "community_story"
+      ],
       "settings": {
         "autoplay": true,
         "autoplay_seconds": 5,
         "accessibility_label": "Featured farm stories"
+      }
+    },
+    "tentwenty_content": {
+      "type": "tentwenty-content",
+      "blocks": {
+        "quality_slide_1": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/pexels-christian-diokno-3841338_1.jpg",
+            "title": "Client 1",
+            "subtitle": "Dubai, United Arab Emirates"
+          }
+        },
+        "quality_slide_2": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/image_41_1.jpg",
+            "title": "Client 2",
+            "subtitle": "Dubai, United Arab Emirates"
+          }
+        },
+        "quality_slide_3": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/image_41.jpg",
+            "title": "Client 3",
+            "subtitle": "Dubai, United Arab Emirates"
+          }
+        }
+      },
+      "block_order": [
+        "quality_slide_1",
+        "quality_slide_2",
+        "quality_slide_3"
+      ],
+      "settings": {
+        "heading": "Quality Products",
+        "description": "<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>",
+        "accessibility_label": "Quality products",
+        "slider_accessibility_label": "Quality product slider"
       }
     },
     "product_list_fa6P9H": {
@@ -61,11 +132,13 @@
             "height": "fit",
             "custom_height": 100,
             "background_media": "none",
+            "background_color": "",
             "video_position": "cover",
             "background_image_position": "cover",
             "border": "none",
             "border_width": 1,
             "border_opacity": 100,
+            "border_color": "",
             "border_radius": 0,
             "padding-block-start": 0,
             "padding-block-end": 0,
@@ -83,10 +156,12 @@
                 "alignment": "left",
                 "type_preset": "h4",
                 "font": "var(--font-body--family)",
+                "font_size": "1rem",
                 "line_height": "normal",
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
+                "text_color": "",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
@@ -104,6 +179,10 @@
                 "label": "View all",
                 "open_in_new_tab": false,
                 "style_class": "link",
+                "custom_button_background": "{{ settings.color_palette.foreground }}",
+                "custom_button_text": "{{ settings.color_palette.background }}",
+                "custom_button_border": "{{ settings.color_palette.background }}",
+                "link_text_color": "",
                 "width": "fit-content",
                 "custom_width": 100,
                 "width_mobile": "fit-content",
@@ -123,9 +202,11 @@
           "static": true,
           "settings": {
             "product_card_gap": 4,
+            "background_color": "",
             "border": "none",
             "border_width": 1,
             "border_opacity": 100,
+            "border_color": "",
             "border_radius": 0,
             "padding-block-start": 0,
             "padding-block-end": 0,
@@ -141,6 +222,7 @@
                 "border": "none",
                 "border_width": 1,
                 "border_opacity": 100,
+                "border_color": "",
                 "border_radius": 0,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
@@ -163,6 +245,7 @@
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
+                "text_color": "",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
@@ -188,6 +271,7 @@
                 "line_height": "normal",
                 "letter_spacing": "normal",
                 "case": "none",
+                "text_color": "",
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -227,6 +311,7 @@
   },
   "order": [
     "tentwenty_hero",
+    "tentwenty_content",
     "product_list_fa6P9H"
   ]
 }

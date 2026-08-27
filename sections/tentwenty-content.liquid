@@ -1,0 +1,199 @@
+{% assign slide_count = section.blocks.size %}
+
+<section id="tentwenty-content-{{ section.id }}" class="tentwenty-content-section" aria-label="{{ section.settings.accessibility_label | escape }}">
+  <tentwenty-content class="tentwenty-content" data-autoplay-interval="5000">
+    <div class="tentwenty-content__intro">
+      {% if section.settings.heading != blank %}<h2 class="tentwenty-content__heading" data-content-animate>{{ section.settings.heading | escape | newline_to_br }}</h2>{% endif %}
+      {% if section.settings.description != blank %}<div class="tentwenty-content__description rte" data-content-animate>{{ section.settings.description }}</div>{% endif %}
+    </div>
+
+    {% if slide_count > 0 %}
+      <div class="tentwenty-content__slider" data-content-slider tabindex="0" aria-roledescription="carousel" aria-label="{{ section.settings.slider_accessibility_label | escape }}" aria-describedby="tentwenty-content-slider-instructions-{{ section.id }}">
+        <p id="tentwenty-content-slider-instructions-{{ section.id }}" class="visually-hidden">Use the left and right arrow keys to change slides. You can also drag or swipe the images.</p>
+        <div class="tentwenty-content__slider-viewport" data-slider-viewport>
+          <div class="tentwenty-content__slider-track" data-slider-track>
+            {% for block in section.blocks %}
+              {% assign image_loading = 'lazy' %}{% if forloop.first %}{% assign image_loading = 'eager' %}{% endif %}
+              <figure class="tentwenty-content__slide{% if forloop.first %} is-active{% elsif forloop.index == 2 %} is-right{% elsif forloop.last %} is-left{% endif %}" data-slider-slide data-index="{{ forloop.index0 }}" aria-hidden="{% if forloop.first %}false{% else %}true{% endif %}" {{ block.shopify_attributes }}>
+                {% if block.settings.image != blank %}
+                  {{ block.settings.image | image_url: width: 1200 | image_tag: class: 'tentwenty-content__slide-image', widths: '320, 480, 640, 900, 1200', sizes: '(min-width: 750px) 28vw, 72vw', loading: image_loading, alt: block.settings.image.alt }}
+                {% else %}
+                  {{ 'lifestyle-1' | placeholder_svg_tag: 'tentwenty-content__slide-image tentwenty-content__slide-image--placeholder' }}
+                {% endif %}
+              </figure>
+            {% endfor %}
+          </div>
+          <div class="tentwenty-content__cursor" data-slider-cursor aria-hidden="true">
+            <span>Drag</span>
+          </div>
+        </div>
+        <div class="tentwenty-content__slide-details" aria-live="polite">
+          {% for block in section.blocks %}
+            <div class="tentwenty-content__slide-detail{% if forloop.first %} is-active{% endif %}" data-slider-details {% unless forloop.first %}hidden{% endunless %}>
+              {% if block.settings.title != blank %}<h3>{{ block.settings.title | escape }}</h3>{% endif %}
+              {% if block.settings.subtitle != blank %}<p>{{ block.settings.subtitle | escape }}</p>{% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  </tentwenty-content>
+</section>
+
+<script src="{{ 'tentwenty-content.js' | asset_url }}" type="module"></script>
+
+{% stylesheet %}
+  .tentwenty-content { display: block; padding: clamp(5.5rem, 10vw, 9.5rem) 0 clamp(5rem, 9vw, 8.5rem); overflow: hidden; background: rgb(var(--color-background-rgb)); color: rgb(var(--color-foreground-rgb)); position: relative; }
+  .tentwenty-content__intro { max-width: 54rem; margin: 0 auto; padding: 0 var(--page-margin); text-align: center; }
+  .tentwenty-content__heading, .tentwenty-content__description { margin: 0; }
+  .tentwenty-content__heading { font-family: var(--font-heading--family); font-size: clamp(2.5rem, 3.6vw, 3.5rem); font-weight: var(--font-heading--weight); letter-spacing: -0.04em; line-height: 1.05; text-wrap: balance; }
+  .tentwenty-content__description { max-width: 43rem; margin: 1.5rem auto 0; color: rgb(var(--color-foreground-rgb) / 72%); font-size: clamp(0.9375rem, 1.2vw, 1.125rem); line-height: 1.45; text-wrap: balance; }
+  .tentwenty-content__description > :first-child { margin-top: 0; }
+  .tentwenty-content__description > :last-child { margin-bottom: 0; }
+  .tentwenty-content[data-revealing] [data-content-animate] { clip-path: inset(0 0 100% 0); opacity: 0; transform: translateY(1.75rem); }
+  .tentwenty-content.is-revealed .tentwenty-content__heading { animation: tentwenty-content-heading-reveal 820ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .tentwenty-content.is-revealed .tentwenty-content__description { animation: tentwenty-content-paragraph-reveal 680ms cubic-bezier(0.16, 1, 0.3, 1) 560ms both; }
+
+  .tentwenty-content__slider { margin-top: clamp(3.5rem, 7vw, 6.5rem); outline-offset: 0.5rem; position: relative; }
+  .tentwenty-content__slider:focus-visible { outline: 2px solid currentColor; }
+
+  .tentwenty-content__slider-viewport { position: relative; width: 100%; height: 640px; overflow: visible; touch-action: pan-y; user-select: none; cursor: grab; }
+  .tentwenty-content__slider.is-dragging .tentwenty-content__slider-viewport { cursor: grabbing; }
+
+  .tentwenty-content__slider-track { position: relative; width: 100%; height: 100%; }
+
+  .tentwenty-content__slide {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 435px;
+    height: 620px;
+    margin: 0;
+    transform-origin: center bottom;
+    will-change: transform, opacity;
+    user-select: none;
+    pointer-events: none;
+  }
+  .tentwenty-content__slide.is-active {
+    pointer-events: auto;
+    z-index: 3;
+    opacity: 1;
+    transform-origin: center bottom;
+  }
+  .tentwenty-content__slide.is-left {
+    pointer-events: auto;
+    z-index: 2;
+    transform-origin: right bottom;
+  }
+  .tentwenty-content__slide.is-right {
+    pointer-events: auto;
+    z-index: 2;
+    transform-origin: left bottom;
+  }
+  .tentwenty-content__slide-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+  .tentwenty-content__slide-image--placeholder { fill: #8f9d7e; }
+
+   .tentwenty-content__cursor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 99px;
+    height: 99px;
+    border-radius: 50%;
+    background: #fff;
+    color: #000;
+    font-size: 1.25rem;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    z-index: 10;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease;
+  }
+  .tentwenty-content__cursor.is-visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  .tentwenty-content__cursor.is-active {
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+
+  .tentwenty-content__slide-details { min-height: 3.5rem; margin-top: 1.5rem; padding: 0 var(--page-margin); text-align: center; }
+  .tentwenty-content__slide-detail.is-entering { animation: tentwenty-content-detail-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .tentwenty-content__slide-detail.is-leaving { animation: tentwenty-content-detail-out 220ms cubic-bezier(0.7, 0, 0.84, 0) both; }
+  .tentwenty-content__slide-detail h3, .tentwenty-content__slide-detail p { margin: 0; }
+  .tentwenty-content__slide-detail h3 { font-family: var(--font-heading--family); font-size: 1.125rem; font-weight: var(--font-heading--weight); line-height: 1.2; }
+  .tentwenty-content__slide-detail p { margin-top: 0.375rem; color: rgb(var(--color-foreground-rgb) / 65%); font-size: 0.8125rem; line-height: 1.3; }
+
+  @keyframes tentwenty-content-heading-reveal { from { clip-path: inset(0 0 100% 0); opacity: 0; transform: translateY(1.75rem); } to { clip-path: inset(0 0 0 0); opacity: 1; transform: translateY(0); } }
+  @keyframes tentwenty-content-paragraph-reveal { from { clip-path: inset(0 0 100% 0); opacity: 0; transform: translateY(1.25rem); } to { clip-path: inset(0 0 0 0); opacity: 1; transform: translateY(0); } }
+  @keyframes tentwenty-content-detail-in { from { opacity: 0; transform: translateY(0.5rem); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes tentwenty-content-detail-out { to { opacity: 0; transform: translateY(-0.375rem); } }
+
+  @media screen and (max-width: 749px) {
+    .tentwenty-content { padding-top: 4.5rem; padding-bottom: 5.5rem; }
+    .tentwenty-content__intro { max-width: 24rem; }
+    .tentwenty-content__heading { font-size: clamp(1.625rem, 7vw, 2rem); line-height: 1.12; }
+    .tentwenty-content__description { max-width: 22rem; margin-top: 1rem; font-size: 0.875rem; line-height: 1.45; }
+    .tentwenty-content__slider { margin-top: 3.5rem; }
+    .tentwenty-content__slider-viewport { height: 380px; }
+    .tentwenty-content__slide { width: min(72vw, 14.5rem); height: 330px; }
+    .tentwenty-content__cursor { display: none; }
+    .tentwenty-content__slide-details { margin-top: 1.25rem; }
+    .tentwenty-content__slide-detail h3 { font-size: 1rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tentwenty-content[data-revealing] [data-content-animate],
+    .tentwenty-content.is-revealed [data-content-animate],
+    .tentwenty-content__slide,
+    .tentwenty-content__slide-detail { animation: none; transition: none; opacity: 1; transform: none; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "TenTwenty content slider",
+  "tag": "section",
+  "class": "tentwenty-content-wrapper",
+  "max_blocks": 6,
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Quality Products" },
+    { "type": "richtext", "id": "description", "label": "Description", "default": "<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>" },
+    { "type": "text", "id": "accessibility_label", "label": "Accessible section label", "default": "Quality products" },
+    { "type": "text", "id": "slider_accessibility_label", "label": "Slider accessible label", "default": "Quality product slider" }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Client 1" },
+        { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "Dubai, United Arab Emirates" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "TenTwenty content slider",
+      "blocks": {
+        "slide_1": { "type": "slide" },
+        "slide_2": { "type": "slide" },
+        "slide_3": { "type": "slide" }
+      },
+      "block_order": ["slide_1", "slide_2", "slide_3"]
+    }
+  ]
+}
+{% endschema %}

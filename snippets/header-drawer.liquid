@@ -66,11 +66,14 @@
       on:click="/toggle"
     >
       <span class="svg-wrapper header-drawer-icon header-drawer-icon--open">
-        {{- 'icon-menu.svg' | inline_asset_content -}}
+       {% comment %} {{- 'icon-menu.svg' | inline_asset_content -}} {% endcomment %}
+       {{- 'icon-mobile-menu.svg' | inline_asset_content -}}
       </span>
+      {% comment %}
       <span class="svg-wrapper header-drawer-icon header-drawer-icon--close">
         {{- 'icon-close-menu.svg' | inline_asset_content -}}
       </span>
+      {% endcomment %}
     </summary>
     <div
       ref="menuDrawer"
@@ -809,6 +812,12 @@
     margin: auto;
     width: var(--icon-size-xs);
     height: var(--icon-size-xs);
+  }
+
+  .header__icon--summary .header-drawer-icon.header-drawer-icon--open,
+  .header__icon--summary .header-drawer-icon.header-drawer-icon--open svg {
+    width: 48px;
+    height: 48px;
   }
 
   .menu-drawer__featured-content {
