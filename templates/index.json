@@ -26,7 +26,7 @@
         "grower_story": {
           "type": "slide",
           "settings": {
-            "desktop_image": "shopify://shop_images/pexels-tim-mossholder-974314_1.jpg",
+            "desktop_image": "shopify://shop_images/2582345.jpg",
             "eyebrow": "Welcome To TenTwenty Farms",
             "heading": "From Our Farms\nTo Your Hands",
             "description": "",
@@ -37,7 +37,7 @@
         "harvest_story": {
           "type": "slide",
           "settings": {
-            "desktop_image": "shopify://shop_images/pexels-tim-mossholder-974314_1.jpg",
+            "desktop_image": "shopify://shop_images/images.jpg",
             "eyebrow": "Welcome To TenTwenty Farms",
             "heading": "From Our Farms\nTo Your Hands",
             "description": "",
@@ -48,7 +48,7 @@
         "community_story": {
           "type": "slide",
           "settings": {
-            "desktop_image": "shopify://shop_images/pexels-tim-mossholder-974314_1.jpg",
+            "desktop_image": "shopify://shop_images/images_1.jpg",
             "eyebrow": "Welcome To TenTwenty Farms",
             "heading": "From Our Farms\nTo Your Hands",
             "description": "",
